@@ -3,14 +3,12 @@ on: push
 env:
   APP_NAME: my-app
 jobs:
-  test:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-        node: ["18", "20"]
-    runs-on: ${{ matrix.os }}
+  build:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - run: mkdir -p dist && echo "hello" > dist/app.txt
+      - uses: actions/upload-artifact@v4
         with:
-          node-version: ${{ matrix.node }}
+          name: app-build
+          path: dist/
