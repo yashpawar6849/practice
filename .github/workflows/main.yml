@@ -6,9 +6,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - run: mkdir -p dist && echo "hello" > dist/app.txt
+      - run: echo "output" > result.txt
       - uses: actions/upload-artifact@v4
-        with:
-          name: app-build
-          path: dist/
+        with: { name: result, path: result.txt }
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: result }
+      - run: cat result.txt
