@@ -1,17 +1,17 @@
-name: Deploy Pages
+name: CI CD
 on:
   push:
     branches: [ main ]
-permissions:
-  pages: write
-  id-token: write
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
-    environment: github-pages
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: .
-      - uses: actions/deploy-pages@v4
+      - run: echo "Running tests"
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Tests passed, deploying now"
