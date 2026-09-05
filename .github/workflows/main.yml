@@ -25,7 +25,7 @@ jobs:
       - id: tag
         name: Compute build tag
         run: |
-          TAG:"v${{ input.version }}-${{ input.release_type}}-${{ github.run_numbers }}"
+          TAG:"v${{ inputS.version }}-${{ inputs.release_type}}-${{ github.run_number }}"
           -echo "build_tag=$TAG" >> "GITHUB_OUTPUT"
       - id: date
         name: Compute build date
