@@ -1,8 +1,8 @@
-name: Q2 Release Notes
+name: Q2 Matrix Build
 
 on:
   push:
-    branches: [main] 
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -10,39 +10,44 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     strategy:
-      fail-fast: false 
-      matrix: 
-          os: [ubuntu-latest, ubuntu-22.04]
-          node: [18,20]
-          exclude:
-            - os: ubuntu-22.04
-              node: 18  
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-22.04]
+        node: [18, 20]
+        exclude:
+          - os: ubuntu-22.04
+            node: 18
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
 
-      - name: Print Versions
+      - name: Print versions
         run: |
           node -v
           npm -v
-      - name: Write Report
+
+      - name: Write report
         run: |
           mkdir -p out
-          echo "OS: ${{ matrix.os }}, Node: ${{ matrix.node }}, Run: ${{ github.run_number }}"
+          echo "OS: ${{ matrix.os }}, Node: ${{ matrix.node }}, Run: ${{ github.run_number }}" \
             > "out/report-${{ matrix.os }}-${{ matrix.node }}.txt"
+
       - uses: actions/upload-artifact@v4
-        with: 
+        with:
           name: report-${{ matrix.os }}-${{ matrix.node }}
-          path: out/report-${{ matrix.os }}-${{ matrix.node }}.txt 
-collect: 
-  needs: build
-  if: always()
-  runs-on: ubuntu-latest
-  steps:
-    - uses: actions/download-artifact@v4
-      with:
-        path: all-reports
-    - name: Print all reports
-      run: find all-reports -type f -exec cat {} \;
+          path: out/report-${{ matrix.os }}-${{ matrix.node }}.txt
+
+  collect:
+    needs: build
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: all-reports
+
+      - name: Print all reports
+        run: find all-reports -type f -exec cat {} \;
